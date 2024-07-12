@@ -8,8 +8,8 @@ const cartSlice = createSlice({
     isShowCart: false,
   },
   reducers: {
-    showCart(state, action) {
-      state.isShowCart = true;
+    showCart(state) {
+      state.isShowCart = !state.isShowCart;
     },
     addToCart(state, action) {
       const newItem = action.payload;
