@@ -4,12 +4,14 @@ import viteLogo from "/vite.svg";
 import "./App.css";
 import Auth from "./components/Auth";
 import Layout from "./components/Layout";
+import { useSelector } from "react-redux";
 
 function App() {
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   return (
     <div>
-      <Auth />
-      {/* <Layout /> */}
+      {!isLoggedIn && <Auth />}
+      {isLoggedIn && <Layout />}
     </div>
   );
 }
