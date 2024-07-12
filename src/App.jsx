@@ -4,26 +4,35 @@ import viteLogo from "/vite.svg";
 import "./App.css";
 import Auth from "./components/Auth";
 import Layout from "./components/Layout";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { uiActions } from "./features/ui/uiSlice";
+import Notificatoin from "./components/Notificatoin";
+import { getData, postCartData } from "./features/cart/cartActions";
 
+let isFirstRender = true;
 function App() {
+  const dispatch = useDispatch();
   const cart = useSelector((state) => state.cart);
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const notification = useSelector((state) => state.ui.notification);
+
   useEffect(() => {
-    const sendRequest = async () => {
-      const res = await fetch(
-        "https://redux-shopping-cart-f50a1-default-rtdb.firebaseio.com/cartItems.json",
-        {
-          method: "PUT",
-          body: JSON.stringify(cart),
-        }
-      );
-      const data = await res.json();
-    };
-    sendRequest();
-  }, [cart]);
+    dispatch(getData());
+  }, [dispatch]);
+  useEffect(() => {
+    if (isFirstRender) {
+      isFirstRender = false;
+      return;
+    }
+    if (cart.isChanged) {
+      dispatch(postCartData(cart));
+    }
+  }, [cart, dispatch]);
   return (
     <div>
+      {notification && (
+        <Notificatoin type={notification.type} message={notification.message} />
+      )}
       {!isLoggedIn && <Auth />}
       {isLoggedIn && <Layout />}
     </div>
